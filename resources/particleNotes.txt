@@ -1,0 +1,124 @@
+# Particle Dynamics
+
+    Basic Variables:
+        Position:       p = (Px, Py)
+        Velocity:       v = (Vx, Vy)
+        Acceleration:   a = (Ax, Ay)
+        f -> frame
+        v0 -> Initial Velocity
+        p0 -> Initial Position
+        Δt -> Change in Time
+        Vf -> Current frame velocity
+        Pf -> Current position
+        V(f + 1) -> Next frame Velocity
+        P(f + 1) -> Next frame Position
+
+    Particle Dynamics 1:
+        Position:       p = (Px, Py)
+        Velocity:       v = (Vx, Vy)
+        Acceleration:   a = (Ax, Ay)
+
+        ------------------------------------------------------------------------------------
+        > Acceleration (a) will be constant unless gravity/energy loss is implemented
+        > Frame f -> f + 1
+        > Δt =  1 / FPS
+        ------------------------------------------------------------------------------------
+
+        > Velocity Update
+            [1] V(f + 1 = Vf) + aΔt
+            [2] Next velocity = Current velocity + (Acceleration × Time step)
+            [3]: 
+                > We multiply by Δt as Acceleration is change in Velocity per second.
+                > Δt is a small fraction of a second.
+                > so aΔt tells us how much the Velocity changes in that time step.
+
+        > Position Update
+            [1] P(f + 1) ​= Pf ​+ (Vf*​Δt)
+            [2] Next position = Current position + (Velocity × Time step)
+
+    Particle Collision Detection:
+
+        Types of collision detection explained:
+            Discrete Collision Detection:
+                > Checks for collisions at specific time frames
+                > If particle moves too fast and the time step is large then the particle may 
+                skip through boarders or objects as you only check every step
+
+            Continuious Collision Detection:
+                > Instead of checking for collisions at specific time frames, you check for 
+                collisions continuiously along the path of the particle.
+                > fixes the problem of missing collisions if it occurs between frames
+
+        Symbols Explained:
+            :=   - Assign To
+            []   - Think python indexing
+            ∈    - "Element of" or "belongs to"
+
+        Verticle Walls Velocity Change:
+            > flips Vx to create a bounce back
+
+            V(f+1) := (-V(f+1)[0], V(f+1)[1])
+            > Next frame's velocity = index [0] becoming negative
+
+        Horizontal Walls Velocity Change:
+            > flips Vy to create a bounce back
+
+            V(f+1) := (V(f+1)[0], -V(f+1)[1])
+            > Next frame's velocity = index [0] becoming negative
+
+        Continuious Collisions Detection In Depth:
+            > Linear Interpolation - method used to estimate an unkown value between 2 know values on a line or curve.
+
+            example collision surface: y = b (horizontal)
+
+            ======== Point 1 ========
+            Position:
+            Pf = (x(0), y(0))
+                    |
+                    |
+                    | *Path*   P(f)(0) -> P(f+1)(1)    
+                    |
+                    |
+                    |
+            ======== Point 2 ========
+            Position:
+            P(f+1) = (x(1), y(1))
+
+
+
+            # Position at start of frame (Pf)  -  (x(0), y(0))
+            # Position at end of frame (Pf)  -  (x(1), y(1))
+
+            > Calculations for point of collision using Interpolation Equations
+                y = b
+                                                
+                x(t) = t * x(0) + (1-t) * x(1)  |
+                                                |----> t ∈ [0,1]
+                y(t) = t * y(0) + (1-t) * y(1)  |
+
+                Pc = (x(tc), y(tc))  - exact collision point  - tc unkown!
+
+                y(tc) = b + r
+                y(tc) = tc * y(0) + (1-tc) * y(1)
+                b + r = tc * y(0) + (1-tc) * y(1)
+
+                      b + r - y(1)
+                tc = ---------------   = ...
+                      y(0) - y(1)
+
+
+
+
+        Tunneling + Solution:
+
+             > The next position of the particle may end up outside the boarder, especially if it is moving at a high speed.
+
+             Easy Solution: 
+                Make sure particles dont move too fast + higher FPS
+            
+            Harder but better solution:
+                > use continuious collision detection
+
+
+
+# Video: https://www.youtube.com/watch?v=eED4bSkYCB8    at 12:32
